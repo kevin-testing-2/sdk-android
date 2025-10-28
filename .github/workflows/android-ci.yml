@@ -9,15 +9,14 @@ on:
 
 env:
   GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError" -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true'
-  ZETTLE_GITHUB_ACCESS_TOKEN: "mock_token_for_ci"
-  ZETTLE_CLIENT_ID: "mock_client_id_for_ci"
-  ZETTLE_REDIRECT_URL_SCHEME: "mock_scheme"
-  ZETTLE_REDIRECT_URL_HOST: "mock_host"
 
 jobs:
   build-and-test-java:
     name: Build and Test Java Example
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
 
     steps:
       - name: Checkout code
@@ -37,22 +36,22 @@ jobs:
         with:
           cache-read-only: false
 
-      - name: Setup Mock Credentials
+      - name: Setup CI Credentials
         working-directory: Examples/Example-Java
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ ! -s "zettleSDK.gradle" ] || grep -q '""' zettleSDK.gradle 2>/dev/null; then
-            echo "Setting up mock credentials for CI"
-            cat > zettleSDK.gradle << EOF
+          echo "Setting up CI credentials"
+          cat > zettleSDK.gradle << EOF
           //    Zettle SDK CI Configuration
 
           ext.zettleSDK = [:]
 
-          ext.zettleSDK.githubAccessToken = "${ZETTLE_GITHUB_ACCESS_TOKEN}"
-          ext.zettleSDK.clientId = "${ZETTLE_CLIENT_ID}"
-          ext.zettleSDK.redirectUrlScheme = "${ZETTLE_REDIRECT_URL_SCHEME}"
-          ext.zettleSDK.redirectUrlHost = "${ZETTLE_REDIRECT_URL_HOST}"
+          ext.zettleSDK.githubAccessToken = "${GITHUB_TOKEN}"
+          ext.zettleSDK.clientId = "mock_client_id_for_ci"
+          ext.zettleSDK.redirectUrlScheme = "mock_scheme"
+          ext.zettleSDK.redirectUrlHost = "mock_host"
           EOF
-          fi
 
       - name: Make gradlew executable
         working-directory: Examples/Example-Java
@@ -101,6 +100,9 @@ jobs:
   build-and-test-kotlin:
     name: Build and Test Kotlin Example
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
 
     steps:
       - name: Checkout code
@@ -120,22 +122,22 @@ jobs:
         with:
           cache-read-only: false
 
-      - name: Setup Mock Credentials
+      - name: Setup CI Credentials
         working-directory: Examples/Example-Kotlin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ ! -s "zettleSDK.gradle" ] || grep -q '""' zettleSDK.gradle 2>/dev/null; then
-            echo "Setting up mock credentials for CI"
-            cat > zettleSDK.gradle << EOF
+          echo "Setting up CI credentials"
+          cat > zettleSDK.gradle << EOF
           //    Zettle SDK CI Configuration
 
           ext.zettleSDK = [:]
 
-          ext.zettleSDK.githubAccessToken = "${ZETTLE_GITHUB_ACCESS_TOKEN}"
-          ext.zettleSDK.clientId = "${ZETTLE_CLIENT_ID}"
-          ext.zettleSDK.redirectUrlScheme = "${ZETTLE_REDIRECT_URL_SCHEME}"
-          ext.zettleSDK.redirectUrlHost = "${ZETTLE_REDIRECT_URL_HOST}"
+          ext.zettleSDK.githubAccessToken = "${GITHUB_TOKEN}"
+          ext.zettleSDK.clientId = "mock_client_id_for_ci"
+          ext.zettleSDK.redirectUrlScheme = "mock_scheme"
+          ext.zettleSDK.redirectUrlHost = "mock_host"
           EOF
-          fi
 
       - name: Make gradlew executable
         working-directory: Examples/Example-Kotlin
